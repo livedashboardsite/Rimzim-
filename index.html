@@ -359,9 +359,40 @@
     box-shadow:3px 3px 8px var(--shadow-dark), -3px -3px 8px var(--shadow-light);
   }
   .lumi-send:active{transform:scale(.92);}
+
+  /* ---------- intro overlay ---------- */
+  body.intro-active{overflow:hidden;}
+  .intro-overlay{
+    position:fixed; inset:0; z-index:100;
+    background:var(--bg);
+    display:flex; align-items:center; justify-content:center;
+    transition:opacity .6s ease;
+  }
+  .intro-mark{
+    width:96px; height:96px; border-radius:32px;
+    background:var(--accent); color:var(--accent-ink);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Baloo 2',sans-serif; font-weight:700; font-size:2rem;
+    box-shadow:10px 10px 22px var(--shadow-dark), -8px -8px 20px var(--shadow-light);
+    animation:intro-spin 1.1s cubic-bezier(.65,0,.35,1) forwards;
+  }
+  @keyframes intro-spin{
+    0%{ transform:rotate(0deg) scale(.6); opacity:0; }
+    35%{ opacity:1; }
+    70%{ transform:rotate(360deg) scale(1.1); }
+    100%{ transform:rotate(360deg) scale(1); }
+  }
+  .intro-overlay.intro-done{ opacity:0; pointer-events:none; }
+  @media (prefers-reduced-motion: reduce){
+    .intro-overlay{display:none;}
+  }
 </style>
 </head>
 <body>
+
+<div id="intro-overlay" class="intro-overlay" aria-hidden="true">
+  <div class="intro-mark">LT</div>
+</div>
 
 <header>
   <nav class="wrap">
@@ -567,6 +598,23 @@
 </div>
 
 <script>
+  // ---------- intro overlay ----------
+  (function(){
+    var overlay = document.getElementById('intro-overlay');
+    if(!overlay) return;
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion){
+      overlay.remove();
+      return;
+    }
+    document.body.classList.add('intro-active');
+    setTimeout(function(){
+      overlay.classList.add('intro-done');
+      document.body.classList.remove('intro-active');
+      setTimeout(function(){ overlay.remove(); }, 650);
+    }, 1250);
+  })();
+
   // ---------- live text-scramble rotator ----------
   (function(){
     var el = document.getElementById('scramble-text');
