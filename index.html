@@ -198,7 +198,10 @@
     position:absolute; inset:0; margin:auto; width:150px; height:150px;
     border-radius:44px; display:flex; align-items:center; justify-content:center;
     font-family:'Baloo 2',sans-serif; font-weight:700; font-size:2.4rem; color:var(--ink);
+    overflow:hidden;
   }
+  .avatar-img{width:100%; height:100%; object-fit:cover; display:block;}
+  .avatar-fallback{display:none; width:100%; height:100%; align-items:center; justify-content:center;}
   @media (prefers-reduced-motion: reduce){
     .blob-float, .blob-float-slow{animation:none;}
   }
@@ -216,6 +219,7 @@
     width:100%; aspect-ratio:1/1; border-radius:36px;
     display:flex; align-items:center; justify-content:center;
     font-family:'Baloo 2',sans-serif; font-weight:700; font-size:3rem; color:var(--ink);
+    overflow:hidden;
   }
   .fact-row{display:flex; flex-wrap:wrap; gap:.6rem; margin-top:1.4rem;}
 
@@ -293,6 +297,68 @@
     transform:scale(.9);
     box-shadow:inset 3px 3px 6px var(--shadow-dark-strong), inset -3px -3px 6px var(--shadow-light);
   }
+
+  /* ---------- Lumi chat widget ---------- */
+  .lumi-widget{position:fixed; right:20px; bottom:20px; z-index:60;}
+  .lumi-toggle{
+    width:64px; height:64px; border-radius:26px; border:none; cursor:pointer;
+    background:var(--accent); color:var(--accent-ink);
+    display:flex; align-items:center; justify-content:center; font-size:1.7rem;
+    box-shadow:8px 8px 18px var(--shadow-dark), -6px -6px 16px var(--shadow-light);
+    animation: lumi-bounce 3.4s ease-in-out infinite;
+    transition:transform .15s ease;
+  }
+  .lumi-toggle:active{transform:scale(.92);}
+  @keyframes lumi-bounce{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-6px);}
+  }
+  @media (prefers-reduced-motion: reduce){ .lumi-toggle{animation:none;} }
+  .lumi-panel{
+    position:absolute; right:0; bottom:78px; width:320px; max-width:calc(100vw - 2.5rem);
+    background:var(--bg); border-radius:28px;
+    box-shadow:12px 12px 28px var(--shadow-dark), -10px -10px 24px var(--shadow-light);
+    display:flex; flex-direction:column; overflow:hidden;
+    max-height:70vh;
+  }
+  .lumi-header{
+    display:flex; align-items:center; gap:.8rem; padding:1.1rem 1.2rem;
+    background:var(--surface);
+  }
+  .lumi-avatar{font-size:1.6rem;}
+  .lumi-header strong{font-family:'Baloo 2',sans-serif; font-size:1.05rem; display:block;}
+  .lumi-header p{margin:0; font-size:.8rem; color:var(--ink-soft);}
+  .lumi-close{
+    margin-left:auto; background:none; border:none; cursor:pointer; font-size:1rem; color:var(--ink-soft);
+    width:28px; height:28px; border-radius:10px;
+  }
+  .lumi-close:hover{background:var(--surface-2);}
+  .lumi-messages{
+    flex:1; overflow-y:auto; padding:1rem 1.1rem; display:flex; flex-direction:column; gap:.6rem;
+    min-height:180px;
+  }
+  .lumi-msg{
+    max-width:82%; padding:.65rem .9rem; border-radius:18px; font-size:.92rem; line-height:1.45;
+  }
+  .lumi-msg-bot{ align-self:flex-start; background:var(--surface-2); border-bottom-left-radius:6px; }
+  .lumi-msg-user{ align-self:flex-end; background:var(--accent); color:var(--accent-ink); border-bottom-right-radius:6px; }
+  .lumi-chips{display:flex; flex-wrap:wrap; gap:.5rem; padding:0 1.1rem .8rem;}
+  .lumi-chip{
+    border:none; cursor:pointer; font-size:.8rem; padding:.45rem .8rem; border-radius:14px;
+    background:var(--surface-2); color:var(--ink); font-family:inherit;
+  }
+  .lumi-form{display:flex; gap:.6rem; padding:.9rem 1.1rem; border-top:1px solid var(--shadow-dark);}
+  .lumi-input{
+    flex:1; border:none; border-radius:16px; padding:.65rem .9rem; font-size:.9rem;
+    background:var(--surface-2); color:var(--ink); font-family:inherit;
+  }
+  .lumi-input:focus{outline:2px solid var(--accent);}
+  .lumi-send{
+    width:38px; height:38px; border-radius:14px; border:none; cursor:pointer; flex:none;
+    background:var(--accent); color:var(--accent-ink); font-size:1rem;
+    box-shadow:3px 3px 8px var(--shadow-dark), -3px -3px 8px var(--shadow-light);
+  }
+  .lumi-send:active{transform:scale(.92);}
 </style>
 </head>
 <body>
@@ -339,7 +405,10 @@
         <svg viewBox="0 0 220 220" class="blob-float">
           <path fill="var(--accent)" opacity="0.85" d="M47.3,-58.3C60.5,-49.6,69.6,-33.7,72.6,-17.1C75.6,-0.5,72.6,16.8,63.9,30.9C55.3,45,40.9,55.9,24.7,62.7C8.5,69.5,-9.5,72.2,-25.9,67.5C-42.3,62.8,-57.1,50.7,-65.4,35.2C-73.7,19.7,-75.5,0.8,-70.9,-15.8C-66.3,-32.4,-55.3,-46.7,-41.2,-55.4C-27.1,-64.1,-9.9,-67.2,5.9,-74.2C21.6,-81.2,43.3,-92,47.3,-58.3Z" transform="translate(110 110)"/>
         </svg>
-        <div class="avatar-tile clay">LT</div>
+        <div class="avatar-tile clay">
+          <img src="rim.jpg" alt="Lumansi Tembhare" class="avatar-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <span class="avatar-fallback">LT</span>
+        </div>
       </div>
     </div>
   </section>
@@ -350,7 +419,10 @@
         <h2>About</h2>
       </div>
       <div class="about-grid">
-        <div class="about-photo clay">LT</div>
+        <div class="about-photo clay">
+          <img src="rim.jpg" alt="Lumansi Tembhare" class="avatar-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <span class="avatar-fallback">LT</span>
+        </div>
         <div class="clay about-card">
           <p>I'm a first-year Computer Science (AI) student at Vedam School of Technology in Mumbai, under Ajeenkya D Y Patil University. I didn't grow up around computers or coding — this is a fresh start for me, and I'm building my foundation from the ground up.</p>
           <p>Right now I'm getting comfortable with the basics — HTML and Python — and slowly finding my footing in web development and programming. Outside of coursework, I'm part of the Cultural Club and the Entrepreneurship Club on campus, trying a bit of everything before I decide what to focus on.</p>
@@ -471,6 +543,28 @@
 <footer>
   Lumansi Tembhare · Mumbai · Built while learning, one line at a time.
 </footer>
+
+<div id="lumi-widget" class="lumi-widget">
+  <button id="lumi-toggle" class="lumi-toggle" aria-label="Chat with Lumi about Lumansi" aria-expanded="false">
+    <span>🌱</span>
+  </button>
+  <div id="lumi-panel" class="lumi-panel clay" hidden>
+    <div class="lumi-header">
+      <span class="lumi-avatar">🌱</span>
+      <div>
+        <strong>Lumi</strong>
+        <p>Ask me about Lumansi</p>
+      </div>
+      <button id="lumi-close" class="lumi-close" aria-label="Close chat">✕</button>
+    </div>
+    <div id="lumi-messages" class="lumi-messages"></div>
+    <div id="lumi-chips" class="lumi-chips"></div>
+    <form id="lumi-form" class="lumi-form">
+      <input id="lumi-input" class="lumi-input" type="text" placeholder="Ask a question…" autocomplete="off" maxlength="300">
+      <button type="submit" class="lumi-send" aria-label="Send">➤</button>
+    </form>
+  </div>
+</div>
 
 <script>
   // ---------- live text-scramble rotator ----------
@@ -602,6 +696,130 @@
       } else {
         window.location.href = 'mailto:' + text;
       }
+    });
+  })();
+  // ---------- Lumi chat widget ----------
+  (function(){
+    var widget = document.getElementById('lumi-widget');
+    var toggleBtn = document.getElementById('lumi-toggle');
+    var panel = document.getElementById('lumi-panel');
+    var closeBtn = document.getElementById('lumi-close');
+    var messagesEl = document.getElementById('lumi-messages');
+    var chipsEl = document.getElementById('lumi-chips');
+    var form = document.getElementById('lumi-form');
+    var input = document.getElementById('lumi-input');
+    if(!widget) return;
+
+    var RULES = 'You are "Lumi", a cheerful assistant embedded in Lumansi Tembhare\'s personal portfolio website. Answer visitor questions about Lumansi using ONLY the facts below. Speak about her in the third person. Keep answers short: 2 to 4 sentences. Warm, encouraging, a little playful tone; an occasional 🌱 emoji is fine, but do not overdo it. If asked something unrelated to Lumansi or her portfolio, politely say you are only able to answer questions about Lumansi. Never invent facts that are not listed below.\n\n' +
+      'Facts about Lumansi:\n' +
+      '- Full name: Lumansi Tembhare\n' +
+      '- First-year B.Tech Computer Science (AI) student at Vedam School of Technology, Mumbai, under Ajeenkya D Y Patil University — started August 2026\n' +
+      '- New to tech, with no coding background before starting this degree\n' +
+      '- Currently comfortable with: HTML, Python\n' +
+      '- Currently exploring: web development, programming fundamentals, AI basics\n' +
+      '- Involved in the Cultural Club and the Entrepreneurship Club on campus\n' +
+      '- No projects or awards yet — she is just getting started; first projects are coming soon\n' +
+      '- Best way to reach her: the contact section of this site (the email, phone, and social links there are placeholders until she adds her real ones)';
+
+    var FALLBACK_QA = [
+      { keys:['stud','course','degree','major','college','university','vedam'], a:"Lumansi is a first-year B.Tech Computer Science (AI) student at Vedam School of Technology in Mumbai, under Ajeenkya D Y Patil University. She started in August 2026. 🌱" },
+      { keys:['skill','python','html','code','coding','tech stack','know'], a:"She's currently comfortable with HTML and Python, and she's exploring web development, programming fundamentals, and the basics of AI." },
+      { keys:['project','portfolio','built','made'], a:"No projects yet — she's brand new to tech and just getting started! Her first real projects are on the way, so check back soon." },
+      { keys:['contact','email','phone','reach','linkedin','github','social'], a:"You can reach her through the contact section of this site — heads up, the email, phone, and social links there are placeholders for now." },
+      { keys:['where','from','live','location','city','mumbai'], a:"Lumansi is based in Mumbai." },
+      { keys:['club','activit','extracurricular'], a:"On campus, she's part of the Cultural Club and the Entrepreneurship Club." },
+      { keys:['background','experience','new','beginner'], a:"She's new to tech, with no coding background before starting her degree — this whole portfolio is part of her learning journey." },
+      { keys:['who','name'], a:"This is Lumansi Tembhare's portfolio! I'm Lumi, here to answer questions about her." }
+    ];
+    function fallbackAnswer(q){
+      var lower = q.toLowerCase();
+      for (var i=0;i<FALLBACK_QA.length;i++){
+        var item = FALLBACK_QA[i];
+        for (var j=0;j<item.keys.length;j++){
+          if (lower.indexOf(item.keys[j]) !== -1) return item.a;
+        }
+      }
+      return "I'm not sure about that one — try asking about her studies, skills, background, or how to reach her!";
+    }
+
+    var sample = null;
+    var samplePromise = (window.claude && window.claude.use) ? window.claude.use('sample') : Promise.resolve(null);
+    samplePromise.then(function(fn){ sample = fn; }).catch(function(){ sample = null; });
+
+    var turns = [];
+    var opened = false;
+    var CHIPS = ['What does she study?', 'What are her skills?', 'How do I reach her?'];
+
+    function addMessage(role, text){
+      var bubble = document.createElement('div');
+      bubble.className = 'lumi-msg ' + (role === 'user' ? 'lumi-msg-user' : 'lumi-msg-bot');
+      bubble.textContent = text;
+      messagesEl.appendChild(bubble);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+      return bubble;
+    }
+    function renderChips(){
+      chipsEl.innerHTML = '';
+      CHIPS.forEach(function(q){
+        var chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'lumi-chip';
+        chip.textContent = q;
+        chip.addEventListener('click', function(){ sendQuestion(q); });
+        chipsEl.appendChild(chip);
+      });
+    }
+    function openPanel(){
+      panel.hidden = false;
+      toggleBtn.setAttribute('aria-expanded', 'true');
+      if (!opened){
+        opened = true;
+        addMessage('bot', "Hi! I'm Lumi 🌱 — ask me anything about Lumansi.");
+        renderChips();
+      }
+      input.focus();
+    }
+    function closePanel(){
+      panel.hidden = true;
+      toggleBtn.setAttribute('aria-expanded', 'false');
+    }
+    toggleBtn.addEventListener('click', function(){
+      if (panel.hidden) openPanel(); else closePanel();
+    });
+    closeBtn.addEventListener('click', closePanel);
+
+    var PERMANENT_CODES = ['not_granted','sampling_disabled','not_declared','capability_disabled','capability_removed'];
+
+    function sendQuestion(q){
+      q = (q || '').trim();
+      if (!q) return;
+      addMessage('user', q);
+      input.value = '';
+      chipsEl.innerHTML = '';
+      var thinking = addMessage('bot', 'Thinking…');
+
+      if (sample){
+        turns.push({ role:'user', content:q });
+        sample([{ role:'user', content:RULES }].concat(turns), {
+          cache:false,
+          modelTier:'quick',
+          onText:function(e){ thinking.textContent = e.text; }
+        }).then(function(result){
+          thinking.textContent = result.text;
+          turns.push({ role:'assistant', content:result.text });
+        }).catch(function(e){
+          if (PERMANENT_CODES.indexOf(e.code) !== -1){ sample = null; }
+          turns.pop();
+          thinking.textContent = fallbackAnswer(q);
+        });
+      } else {
+        setTimeout(function(){ thinking.textContent = fallbackAnswer(q); }, 350);
+      }
+    }
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      sendQuestion(input.value);
     });
   })();
 </script>
